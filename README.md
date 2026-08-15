@@ -22,7 +22,7 @@
   </p>
 </div>
 
-![SketchForge PCB editor showing a routed board](artifacts/cny70-board-final.png)
+![SketchForge PCB circuit editor showing Project 7](docs/media/project-7-circuit.png)
 
 ## Why SketchForge PCB
 
@@ -53,7 +53,7 @@ Current editor limitation: component placement and drawn routing are currently t
 
 ## Demo
 
-![SketchForge PCB board example](artifacts/cny70-board-current.png)
+![SketchForge PCB Project 7 live editor demo](docs/media/project-7-demo.gif)
 
 ## Getting Started
 
