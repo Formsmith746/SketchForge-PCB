@@ -2,3 +2,4 @@ node_modules/
 .next/
 *.tsbuildinfo
 npm-debug.log*
+.tmp-*

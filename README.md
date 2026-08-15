@@ -22,7 +22,7 @@
   </p>
 </div>
 
-![SketchForge PCB circuit editor showing Project 7](docs/media/project-7-circuit.jpg)
+![SketchForge PCB circuit editor showing Project 7](docs/media/project-7-circuit.png)
 
 ## Why SketchForge PCB
 
