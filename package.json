@@ -1,0 +1,27 @@
+{
+  "name": "sketchforge-menu-shell",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node --max-old-space-size=512 node_modules/next/dist/bin/next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test:obj-open-edges": "node --no-warnings --experimental-strip-types scripts/check-obj-open-edges.mjs",
+    "mcp:sketchforge-pcb": "node scripts/sketchforge-pcb-mcp-server.mjs"
+  },
+  "dependencies": {
+    "next": "^16.3.0",
+    "polygon-clipping": "^0.15.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "@types/three": "^0.185.4",
+    "typescript": "^5.8.3"
+  }
+}

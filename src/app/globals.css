@@ -1,0 +1,4174 @@
+:root {
+  --background: #ffffff;
+  --foreground: #31465d;
+  --mode-tabs-height: 34px;
+  --tool-ribbon-height: 86px;
+  --editor-ribbon-height: calc(var(--mode-tabs-height) + var(--tool-ribbon-height));
+  --font-ui: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-ui);
+}
+
+button {
+  border: 0;
+  font: inherit;
+}
+
+.sketchforge-editor {
+  width: 100vw;
+  height: 100vh;
+  min-width: 320px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.editor-ribbon {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10;
+  height: var(--editor-ribbon-height);
+  color: #31465d;
+  background: #f4f7f9;
+  border-bottom: 1px solid #cbd7e1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94), 0 1px 3px rgba(32, 54, 72, 0.08);
+}
+
+.editor-mode-tabs {
+  display: flex;
+  height: var(--mode-tabs-height);
+  align-items: stretch;
+  padding-left: 10px;
+  background: linear-gradient(180deg, #f9fbfc 0%, #eef3f6 100%);
+  border-bottom: 1px solid #ccd8e1;
+}
+
+.editor-mode-tabs button {
+  min-width: 92px;
+  padding: 0 19px;
+  color: #64798d;
+  background: transparent;
+  border-bottom: 3px solid transparent;
+  cursor: default;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.editor-mode-tabs button.active {
+  color: #244d69;
+  background: rgba(255, 255, 255, 0.78);
+  border-bottom-color: #159fd0;
+}
+
+.editor-mode-tabs button.mode-tab-enabled {
+  cursor: pointer;
+}
+
+.editor-tool-groups {
+  display: flex;
+  width: 100%;
+  height: var(--tool-ribbon-height);
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: #b9c8d4 #edf2f5;
+  scrollbar-width: thin;
+}
+
+.ribbon-group {
+  display: flex;
+  height: var(--tool-ribbon-height);
+  min-width: max-content;
+  flex: 0 0 auto;
+  flex-direction: column;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08) 52%, rgba(205, 218, 229, 0.18));
+  border-right: 1px solid rgba(193, 207, 219, 0.9);
+}
+
+.ribbon-spacer {
+  min-width: 170px;
+  height: var(--tool-ribbon-height);
+  flex: 1 0 170px;
+  background: #f4f7f9;
+  border-right: 1px solid rgba(193, 207, 219, 0.9);
+}
+
+.ribbon-group h2 {
+  height: 21px;
+  margin: 0;
+  padding: 6px 8px 0;
+  color: #607589;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 13px;
+  letter-spacing: 0.025em;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ribbon-group-tools {
+  display: flex;
+  height: 65px;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1px;
+  padding: 1px 4px 3px;
+}
+
+.ribbon-tool {
+  display: flex;
+  width: 56px;
+  height: 60px;
+  flex: 0 0 56px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1px;
+  padding: 1px 0 2px;
+  color: #516a7f;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ribbon-tool.active {
+  color: #1e506d;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #8fc8df;
+  box-shadow: inset 0 -2px 0 #159fd0;
+}
+
+.ribbon-tool:disabled {
+  cursor: default;
+  filter: grayscale(0.85);
+  opacity: 0.34;
+}
+
+.ribbon-tool:hover {
+  color: #29465f;
+  background: rgba(255, 255, 255, 0.72);
+  border-color: #c4d2dc;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+}
+
+.ribbon-tool-art {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  place-items: center;
+}
+
+.ribbon-tool-art svg,
+.ribbon-tool-art .toolbar-sprite-icon,
+.ribbon-tool-art .vector-toolbar-sprite-icon,
+.ribbon-tool-art .toolbar-command-icon,
+.ribbon-tool-art .toolbar-user-art-icon,
+.pcb-generated-icon {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.board-tool-groups .ribbon-tool-art .board-toolbar-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.board-tool-groups .ribbon-tool-art .board-toolbar-icon-emphasis {
+  width: 42px;
+  height: 42px;
+}
+
+/* Optical alignment compensates for the supplied PNGs' different transparent margins. */
+.board-tool-groups .ribbon-tool-art .board-toolbar-icon-board-draw {
+  transform: translateY(1px);
+}
+
+.board-tool-groups .ribbon-tool-art .board-toolbar-icon-board-3d {
+  transform: translateY(3px);
+}
+
+.pcb-generated-icon-distribute-large {
+  transform: scaleY(1.25);
+}
+
+.pcb-generated-icon-flip {
+  transform: scale(1.2);
+}
+
+.ribbon-tool-art .toolbar-command-icon {
+  --toolbar-art-offset-y: 0%;
+  transform: translateY(var(--toolbar-art-offset-y));
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-home,
+.ribbon-tool-art .toolbar-art-toolbar-delete {
+  --toolbar-art-offset-y: -5.25%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-copy {
+  --toolbar-art-offset-y: -6.6%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-paste {
+  --toolbar-art-offset-y: -2.4%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-duplicate {
+  --toolbar-art-offset-y: -7.1%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-undo,
+.ribbon-tool-art .toolbar-art-toolbar-redo {
+  --toolbar-art-offset-y: -8.95%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-snap-grid {
+  --toolbar-art-offset-y: -4.2%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-import {
+  --toolbar-art-offset-y: -0.8%;
+}
+
+.ribbon-tool-art .toolbar-art-toolbar-settings {
+  --toolbar-art-offset-y: -3.7%;
+}
+
+.ribbon-tool-art .toolbar-sprite-icon,
+.ribbon-tool-art .vector-toolbar-sprite-icon {
+  background-repeat: no-repeat;
+  background-position: var(--sprite-x, var(--vector-sprite-x)) var(--sprite-y, var(--vector-sprite-y));
+  background-size: var(--sprite-width, var(--vector-sprite-width)) var(--sprite-height, var(--vector-sprite-height));
+  filter: grayscale(1) contrast(1.22) brightness(0.9);
+  opacity: 0.94;
+}
+
+.ribbon-tool-label {
+  display: block;
+  width: 100%;
+  max-width: 56px;
+  min-height: 13px;
+  overflow: hidden;
+  color: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 12px;
+  text-align: center;
+  text-overflow: ellipsis;
+  transform: scaleX(0.9);
+  transform-origin: center;
+  white-space: nowrap;
+}
+
+.blank-workspace {
+  position: fixed;
+  inset: var(--editor-ribbon-height) 0 0 0;
+  background: #fff;
+}
+
+.circuit-workspace {
+  position: fixed;
+  inset: var(--editor-ribbon-height) 0 0 0;
+  overflow: hidden;
+  color: #29445d;
+  background-color: #fbfdfe;
+  touch-action: none;
+}
+
+.circuit-grid-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.circuit-workspace.panning,
+.circuit-workspace.panning .circuit-part {
+  cursor: grabbing;
+}
+
+.circuit-workspace.tool-wire {
+  cursor: crosshair;
+}
+
+.circuit-workspace.tool-junction {
+  cursor: cell;
+}
+
+.circuit-workspace.drawing-board {
+  cursor: crosshair;
+}
+
+.circuit-workspace.deleting-board {
+  cursor: crosshair;
+}
+
+.circuit-world {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.board-outline-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.board-outline-path {
+  fill: none;
+  stroke: #3d8f6c;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.board-outline-path.draft {
+  fill: none;
+  stroke: #159fd0;
+}
+
+.board-outline-path.circuit-reference {
+  stroke: #4a8e70;
+  stroke-width: 1.8;
+}
+
+.board-selected-segment {
+  fill: none;
+  stroke: #159fd0;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.board-outline-points circle {
+  fill: #fbfdfe;
+  stroke: #3d8f6c;
+  stroke-width: 2;
+}
+
+.board-outline-points circle.closing-point {
+  fill: #dff5fb;
+  stroke: #159fd0;
+  stroke-width: 3;
+}
+
+.board-outline-points circle.selected-point {
+  fill: #159fd0;
+  stroke: #087ba2;
+  stroke-width: 1.5;
+}
+
+.board-outline-points circle.board-insert-point {
+  fill: #08a5d6;
+  stroke: #087ba2;
+  stroke-width: 1.25;
+}
+
+.board-outline-points circle.board-preview-point {
+  fill: rgba(21, 159, 208, 0.22);
+  stroke: rgba(8, 123, 162, 0.62);
+  stroke-width: 1.4;
+  pointer-events: none;
+}
+
+.board-dimension-bubble {
+  pointer-events: none;
+}
+
+.board-dimension-bubble rect {
+  fill: #29465d;
+  stroke: #fff;
+  stroke-width: 1;
+}
+
+.board-dimension-bubble text {
+  fill: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mode-board .circuit-part.board-reference-part:not(.hidden) {
+  opacity: 0.46;
+  pointer-events: none;
+}
+
+.mode-board .circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text) {
+  pointer-events: none;
+}
+
+.mode-board .circuit-part-outline {
+  opacity: 0 !important;
+}
+
+.mode-board .circuit-wire-layer .wire-path,
+.mode-board .circuit-junction {
+  opacity: 0.34;
+}
+
+.mode-board .circuit-wire-layer .wire-hit {
+  pointer-events: none;
+}
+
+.board-empty-prompt {
+  position: absolute;
+  inset: 0 320px 0 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  gap: 7px;
+  color: #5b7185;
+  pointer-events: none;
+  text-align: center;
+}
+
+.board-empty-prompt strong {
+  color: #304e66;
+  font-size: 17px;
+}
+
+.board-empty-prompt span {
+  font-size: 12px;
+}
+
+.board-3d-preview {
+  position: fixed;
+  inset: var(--editor-ribbon-height) 0 0;
+  z-index: 9;
+  overflow: hidden;
+  color: #29445d;
+  background: #f8fbfc;
+}
+
+.board-3d-header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  display: flex;
+  height: 48px;
+  align-items: center;
+  gap: 18px;
+  padding: 0 12px 0 16px;
+  background: rgba(247, 250, 252, 0.96);
+  border-bottom: 1px solid #ccd8e1;
+}
+
+.board-3d-header > div:first-child {
+  display: grid;
+  min-width: 250px;
+  gap: 1px;
+}
+
+.board-3d-header strong {
+  color: #29465d;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.board-3d-header span {
+  color: #708396;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.board-3d-view-buttons,
+.board-3d-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.board-3d-header-actions {
+  margin-left: auto;
+}
+
+.board-3d-view-buttons button,
+.board-3d-header-actions button,
+.board-3d-close {
+  height: 28px;
+  padding: 0 11px;
+  color: #3f5a70;
+  background: #fff;
+  border: 1px solid #cbd8e2;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.board-3d-view-buttons button:hover,
+.board-3d-header-actions button:hover,
+.board-3d-close:hover {
+  color: #176b8a;
+  background: #eef9fc;
+  border-color: #82cbe1;
+}
+
+.board-3d-view-buttons button.active,
+.board-3d-header-actions button.active {
+  color: #176b8a;
+  background: #e6f6fb;
+  border-color: #68bdd8;
+}
+
+.board-3d-close {
+  width: 32px;
+  padding: 0;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.board-3d-settings {
+  position: absolute;
+  top: 54px;
+  right: 12px;
+  z-index: 4;
+  display: grid;
+  width: 245px;
+  gap: 10px;
+  padding: 13px;
+  color: #3d586d;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #cbd8e2;
+  border-radius: 5px;
+  box-shadow: 0 10px 28px rgba(53, 76, 93, 0.14);
+}
+
+.board-3d-settings strong {
+  color: #29465d;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.board-3d-settings label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.board-3d-settings input {
+  width: 15px;
+  height: 15px;
+  accent-color: #2388a8;
+}
+
+.board-3d-settings p {
+  margin: 0;
+  color: #718597;
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.board-3d-canvas {
+  position: absolute;
+  inset: 48px 0 0;
+}
+
+.board-3d-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: 0;
+}
+
+.board-3d-help {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  z-index: 2;
+  padding: 7px 10px;
+  color: #577085;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d5e0e7;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 750;
+  pointer-events: none;
+}
+
+.circuit-wire-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.circuit-wire-layer path {
+  fill: none;
+  stroke: var(--wire-color, #2f9e44);
+  stroke-width: var(--wire-stroke-width, 2.2px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.circuit-wire-layer path.wire-hit {
+  stroke: transparent;
+  stroke-width: 14;
+  cursor: pointer;
+  pointer-events: stroke;
+}
+
+.circuit-wire-layer path.wire-path {
+  pointer-events: none;
+}
+
+.circuit-wire.layer-bottom path.wire-path {
+  stroke-dasharray: 8 5;
+}
+
+.circuit-wire-layer path.highlighted {
+  stroke: #02a6d7;
+  stroke-width: var(--wire-highlight-width, 3.4px);
+}
+
+.circuit-wire-layer path.pending {
+  stroke: #2f9e44;
+  stroke-dasharray: 6 5;
+}
+
+.circuit-wire-layer path.selected {
+  stroke: var(--wire-color, #2f9e44);
+  stroke-width: var(--wire-selected-width, 3.8px);
+}
+
+.circuit-wire.dimmed {
+  opacity: 0.14;
+}
+
+.circuit-wire.dimmed .wire-hit {
+  pointer-events: none;
+}
+
+.wire-route-handles circle,
+.pending-wire-bend {
+  vector-effect: non-scaling-stroke;
+}
+
+.wire-endpoint-handle {
+  fill: var(--wire-color, #2f9e44);
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.wire-bend-handle,
+.wire-midpoint-handle {
+  fill: #fff;
+  stroke: var(--wire-color, #2f9e44);
+  stroke-width: 2;
+  pointer-events: all;
+  touch-action: none;
+}
+
+.wire-bend-handle {
+  cursor: move;
+}
+
+.wire-midpoint-handle {
+  opacity: 0.82;
+  cursor: crosshair;
+}
+
+.wire-bend-handle:hover,
+.wire-midpoint-handle:hover {
+  fill: #eaf8ee;
+}
+
+.pending-wire-bend {
+  fill: #fff;
+  stroke: #2f9e44;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.pending-wire-cursor {
+  fill: #eaf8ee;
+  stroke: #2f9e44;
+  stroke-width: 1.5;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.pending-wire-cursor.snapped {
+  fill: #13a8d8;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.circuit-junction {
+  position: absolute;
+  z-index: 3;
+  width: 10px;
+  height: 10px;
+  background: #405464;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #405464;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+}
+
+.circuit-junction:hover,
+.circuit-junction.selected {
+  background: #13a8d8;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #13a8d8;
+}
+
+.circuit-junction.dimmed {
+  opacity: 0.14;
+  pointer-events: none;
+}
+
+.pcb-transfer-panel {
+  position: fixed;
+  top: calc(var(--editor-ribbon-height) + 8px);
+  right: 18px;
+  z-index: 44;
+  width: min(440px, calc(100vw - 28px));
+  overflow: hidden;
+  color: #263f57;
+  background: #fff;
+  border: 1px solid #d5dfe7;
+  border-radius: 12px;
+  box-shadow: 0 18px 55px rgba(30, 52, 70, 0.22);
+}
+
+.pcb-transfer-panel > header {
+  display: flex;
+  height: 52px;
+  padding: 0 10px 0 16px;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #dce4ea;
+}
+
+.pcb-transfer-panel > header strong {
+  color: #29465d;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.pcb-transfer-panel > header button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  place-items: center;
+  color: #61778a;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pcb-transfer-panel > header button:hover {
+  color: #1c607f;
+  background: #edf3f6;
+}
+
+.pcb-transfer-panel > header svg,
+.pcb-open-project-icon svg,
+.pcb-export-dialog-footer svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pcb-workspace-modal {
+  position: fixed;
+  inset: var(--editor-ribbon-height) 0 0;
+  z-index: 60;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding-top: 36px;
+}
+
+.pcb-workspace-modal-card {
+  position: relative;
+  z-index: 2;
+  width: 760px;
+  max-width: calc(100vw - 32px);
+  height: min(620px, calc(100vh - var(--editor-ribbon-height) - 72px));
+  max-height: calc(100vh - var(--editor-ribbon-height) - 72px);
+  overflow: hidden;
+  color: #264158;
+  background: #fff;
+  border: 1px solid #cfd9e2;
+  border-radius: 3px;
+  box-shadow: 0 16px 48px rgba(25, 42, 58, 0.28);
+}
+
+.pcb-workspace-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 0;
+  background: rgba(39, 52, 63, 0.08);
+  border: 0;
+  cursor: default;
+}
+
+.pcb-workspace-modal-header {
+  display: flex;
+  height: 55px;
+  padding: 0 10px 0 16px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d8e1e8;
+}
+
+.pcb-workspace-modal-header strong {
+  color: #264158;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.pcb-workspace-modal-header button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  place-items: center;
+  color: #50677a;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.pcb-workspace-modal-header button:hover {
+  color: #176f95;
+  background: #edf3f6;
+}
+
+.pcb-workspace-modal-header svg,
+.pcb-workspace-settings-nav svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pcb-workspace-modal-layout {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  height: calc(100% - 55px);
+  min-height: 0;
+}
+
+.pcb-workspace-settings-nav {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 16px 10px;
+  background: #f4f7f9;
+  border-right: 1px solid #d8e1e8;
+}
+
+.pcb-workspace-settings-nav button {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  align-items: center;
+  gap: 10px;
+  color: #526b7e;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.pcb-workspace-settings-nav button:hover {
+  color: #274861;
+  background: #e9f0f4;
+}
+
+.pcb-workspace-settings-nav button.active {
+  color: #176f95;
+  background: #fff;
+  border-color: #c7d9e4;
+  box-shadow: 0 1px 3px rgba(31, 64, 84, 0.08);
+}
+
+.pcb-workspace-modal-content {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pcb-workspace-modal-body {
+  display: grid;
+  min-height: 0;
+  padding: 22px 24px;
+  align-content: start;
+  gap: 20px;
+  overflow: auto;
+}
+
+.pcb-workspace-section-heading {
+  display: grid;
+  gap: 5px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e2e9ee;
+}
+
+.pcb-workspace-section-heading strong {
+  color: #213d54;
+  font-size: 17px;
+}
+
+.pcb-workspace-section-heading span {
+  color: #718697;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.pcb-workspace-toggle,
+.pcb-workspace-select,
+.pcb-workspace-readonly-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  min-height: 50px;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e9ee;
+}
+
+.pcb-workspace-toggle > span,
+.pcb-workspace-select > span,
+.pcb-workspace-readonly-row > span {
+  display: grid;
+  gap: 4px;
+}
+
+.pcb-workspace-toggle strong,
+.pcb-workspace-select strong,
+.pcb-workspace-readonly-row strong {
+  color: #29465d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pcb-workspace-toggle small,
+.pcb-workspace-select small,
+.pcb-workspace-readonly-row small {
+  color: #758897;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.pcb-workspace-toggle input {
+  justify-self: end;
+  width: 18px;
+  height: 18px;
+  accent-color: #0098c7;
+}
+
+.pcb-workspace-select select {
+  width: 100%;
+  height: 38px;
+  min-width: 0;
+  padding: 0 10px;
+  color: #263f57;
+  background: #fff;
+  border: 1px solid #ccd9e3;
+  border-radius: 6px;
+  outline: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pcb-workspace-select select:focus {
+  border-color: #65b9d5;
+  box-shadow: 0 0 0 3px rgba(20, 134, 181, 0.12);
+}
+
+.pcb-workspace-readonly-row b {
+  justify-self: end;
+  color: #176f95;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.pcb-workspace-history-setting {
+  display: grid;
+  gap: 12px;
+  padding: 4px 2px;
+}
+
+.pcb-workspace-history-setting > input[type="range"] {
+  width: 100%;
+  accent-color: #0098c7;
+}
+
+.pcb-workspace-history-labels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  color: #7a8d9c;
+  font-size: 11px;
+  font-weight: 750;
+  text-align: center;
+}
+
+.pcb-workspace-history-labels span.active {
+  color: #176f95;
+  font-weight: 900;
+}
+
+.pcb-workspace-history-setting p {
+  margin: 0;
+  color: #718697;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.pcb-workspace-modal-footer {
+  display: flex;
+  min-height: 58px;
+  padding: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #f8fafb;
+  border-top: 1px solid #d8e1e8;
+}
+
+.pcb-workspace-modal-footer span {
+  color: #718697;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.pcb-workspace-modal-footer button {
+  height: 34px;
+  padding: 0 14px;
+  color: #31536a;
+  background: #fff;
+  border: 1px solid #c8d7e1;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.pcb-workspace-modal-footer button:hover {
+  color: #176f95;
+  background: #eef8fb;
+  border-color: #80c7dd;
+}
+
+@media (max-width: 720px) {
+  .pcb-workspace-modal {
+    padding-top: 16px;
+  }
+
+  .pcb-workspace-modal-card {
+    height: calc(100vh - var(--editor-ribbon-height) - 32px);
+    max-height: calc(100vh - var(--editor-ribbon-height) - 32px);
+  }
+
+  .pcb-workspace-modal-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .pcb-workspace-settings-nav {
+    grid-template-columns: repeat(4, 1fr);
+    padding: 8px;
+    border-right: 0;
+    border-bottom: 1px solid #d8e1e8;
+  }
+
+  .pcb-workspace-settings-nav button {
+    min-height: 48px;
+    padding: 5px;
+    justify-content: center;
+    gap: 5px;
+    font-size: 10px;
+  }
+
+  .pcb-workspace-toggle,
+  .pcb-workspace-select,
+  .pcb-workspace-readonly-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .pcb-workspace-toggle input,
+  .pcb-workspace-readonly-row b {
+    justify-self: start;
+  }
+}
+
+.pcb-transfer-body,
+.pcb-export-dialog-body {
+  background: #f6f8fa;
+}
+
+.pcb-transfer-body {
+  display: grid;
+  gap: 13px;
+  padding: 14px;
+}
+
+.pcb-open-project-button {
+  display: grid;
+  width: 100%;
+  min-height: 68px;
+  padding: 11px 13px;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  color: #29465d;
+  background: #fff;
+  border: 1px solid #d4dfe7;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.pcb-open-project-button:hover {
+  background: #f6fcfe;
+  border-color: #70c1dc;
+}
+
+.pcb-open-project-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  color: #168fb9;
+  background: #e8f7fb;
+  border: 1px solid #c4e9f3;
+  border-radius: 7px;
+}
+
+.pcb-open-project-button > span:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.pcb-open-project-button strong,
+.pcb-import-drop-zone strong {
+  color: #2c485e;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.pcb-open-project-button small,
+.pcb-import-drop-zone span {
+  color: #738798;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.pcb-import-divider {
+  display: grid;
+  height: 18px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 9px;
+  color: #8a99a5;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.pcb-import-divider::before,
+.pcb-import-divider::after {
+  height: 1px;
+  background: #d9e2e8;
+  content: "";
+}
+
+.pcb-import-drop-zone {
+  display: grid;
+  width: 100%;
+  min-height: 148px;
+  padding: 16px;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  color: #1598c5;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px dashed #93c8dc;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.pcb-import-drop-zone:hover {
+  background: #f2fbfd;
+  border-color: #159fd0;
+}
+
+.pcb-import-drop-zone > svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 2px;
+}
+
+.pcb-transfer-support-note {
+  padding: 9px 10px;
+  color: #6c8192;
+  background: #eef3f6;
+  border: 1px solid #dce5ea;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+.pcb-export-dialog-body {
+  max-height: calc(100vh - var(--editor-ribbon-height) - 92px);
+  overflow-y: auto;
+}
+
+.pcb-export-setting-section {
+  padding: 14px 15px;
+  background: #fff;
+  border-bottom: 1px solid #dce4ea;
+}
+
+.pcb-export-file-section {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.pcb-export-setting-section > label,
+.pcb-export-section-heading strong {
+  color: #405b70;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.pcb-export-file-input-wrap {
+  display: grid;
+  height: 36px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  overflow: hidden;
+  background: #f9fbfc;
+  border: 1px solid #cbd8e1;
+  border-radius: 5px;
+}
+
+.pcb-export-file-input-wrap:focus-within {
+  border-color: #159fd0;
+  box-shadow: 0 0 0 2px rgba(21, 159, 208, 0.12);
+}
+
+.pcb-export-file-input-wrap input {
+  min-width: 0;
+  height: 34px;
+  padding: 0 9px;
+  color: #29465d;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font-size: 11px;
+  font-weight: 780;
+}
+
+.pcb-export-file-input-wrap span {
+  padding-right: 9px;
+  color: #8293a1;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.pcb-export-section-heading {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pcb-export-section-heading span {
+  color: #8293a1;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.pcb-export-format-slider {
+  position: relative;
+  display: grid;
+  height: 38px;
+  padding: 3px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  isolation: isolate;
+  background: #e8eef2;
+  border: 1px solid #d1dce4;
+  border-radius: 7px;
+}
+
+.pcb-export-format-slider::before {
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 5);
+  background: #fff;
+  border: 1px solid #b8ccd9;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(38, 63, 87, 0.12);
+  content: "";
+  transition: transform 140ms ease;
+}
+
+.pcb-export-format-slider[data-format="gerber"]::before { transform: translateX(100%); }
+.pcb-export-format-slider[data-format="kicad_pcb"]::before { transform: translateX(200%); }
+.pcb-export-format-slider[data-format="svg"]::before { transform: translateX(300%); }
+.pcb-export-format-slider[data-format="bom"]::before { transform: translateX(400%); }
+
+.pcb-export-format-slider button {
+  min-width: 0;
+  padding: 0 3px;
+  color: #718496;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.pcb-export-format-slider button[aria-checked="true"] {
+  color: #1c607f;
+}
+
+.pcb-export-format-summary {
+  display: grid;
+  gap: 8px;
+  margin: 13px 15px 0;
+  padding: 12px;
+  color: #526b7e;
+  background: #fff;
+  border: 1px solid #d9e3e9;
+  border-radius: 7px;
+}
+
+.pcb-export-format-summary > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pcb-export-format-summary strong {
+  color: #29465d;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.pcb-export-format-summary span {
+  color: #718597;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.pcb-export-format-summary p {
+  margin: 0;
+  color: #63798b;
+  font-size: 10px;
+  font-weight: 690;
+  line-height: 1.5;
+}
+
+.pcb-export-format-summary p b {
+  color: #405e73;
+  font-weight: 850;
+}
+
+.pcb-export-warning {
+  margin: 10px 15px 0;
+  padding: 9px 10px;
+  color: #8c6420;
+  background: #fff8df;
+  border: 1px solid #ead9a2;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 780;
+}
+
+.pcb-export-dialog-footer {
+  padding: 13px 15px 15px;
+}
+
+.pcb-export-dialog-footer button {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  background: linear-gradient(180deg, #17a8d6 0%, #078db9 100%);
+  border: 1px solid #087fa5;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pcb-export-dialog-footer button:hover { filter: brightness(1.03); }
+
+.pcb-export-dialog-footer button:disabled {
+  cursor: default;
+  filter: grayscale(0.5);
+  opacity: 0.42;
+}
+
+.circuit-part {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  width: var(--part-width, 88px);
+  height: var(--part-height, 58px);
+  grid-template-rows: var(--part-height, 58px);
+  justify-items: center;
+  color: #354956;
+  cursor: grab;
+  outline: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 120ms ease, filter 120ms ease, outline-color 120ms ease, background 120ms ease;
+  user-select: none;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.circuit-selection-marquee {
+  position: absolute;
+  z-index: 7;
+  background: rgba(0, 159, 227, 0.1);
+  border: 1px solid rgba(0, 159, 227, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+  pointer-events: none;
+}
+
+.circuit-part:active {
+  cursor: grabbing;
+}
+
+.circuit-part.selected {
+  background: transparent;
+  outline: 0;
+  box-shadow: none;
+}
+
+.circuit-part.hidden,
+.circuit-part.dimmed {
+  opacity: 0.14;
+}
+
+.circuit-part.isolation-locked,
+.circuit-part.isolation-locked * {
+  cursor: default !important;
+}
+
+.circuit-part.isolation-locked .circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text),
+.circuit-part.isolation-locked .circuit-pin {
+  pointer-events: none !important;
+}
+
+.circuit-part.isolation-locked .circuit-part-outline {
+  opacity: 0 !important;
+}
+
+.circuit-part.hidden .circuit-pin {
+  pointer-events: none;
+}
+
+.circuit-part.hidden .circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text) {
+  pointer-events: visiblePainted;
+}
+
+.circuit-part.hidden:has(.circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text):hover) {
+  opacity: 0.28;
+}
+
+.circuit-part-graphic {
+  position: relative;
+  display: block;
+  width: var(--part-width, 88px);
+  height: var(--part-height, 58px);
+  pointer-events: none;
+  transition: transform 120ms ease;
+}
+
+.circuit-part-rotation {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+
+.circuit-rotate-handle {
+  position: absolute;
+  left: 50%;
+  top: -31px;
+  z-index: 8;
+  display: grid;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  place-items: center;
+  color: rgba(47, 61, 70, 0.62);
+  background: transparent;
+  border: 0;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+}
+
+.circuit-rotate-handle:active {
+  cursor: grabbing;
+}
+
+.circuit-rotate-handle:hover {
+  color: rgba(47, 61, 70, 0.9);
+}
+
+.circuit-rotate-handle svg {
+  display: block;
+  width: 29px;
+  height: 29px;
+  overflow: visible;
+  fill: currentColor;
+  pointer-events: none;
+}
+
+.component-rotation-guide {
+  position: absolute;
+  z-index: 12;
+  width: 212px;
+  height: 212px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.component-rotation-guide > svg {
+  display: block;
+  width: 212px;
+  height: 212px;
+  filter: drop-shadow(0 1px 2px rgba(20, 42, 58, 0.14));
+}
+
+.component-rotation-outer,
+.component-rotation-inner {
+  fill: rgba(104, 203, 232, 0.1);
+  stroke: rgba(0, 159, 227, 0.85);
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+}
+
+.component-rotation-inner {
+  fill: none;
+  stroke: rgba(0, 159, 227, 0.46);
+}
+
+.component-rotation-tick {
+  stroke: rgba(0, 159, 227, 0.7);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.component-rotation-tick.major {
+  stroke: rgba(0, 121, 176, 0.9);
+  stroke-width: 1.6;
+}
+
+.component-rotation-zero {
+  stroke: rgba(47, 61, 70, 0.38);
+  stroke-width: 1.1;
+}
+
+.component-rotation-current {
+  stroke: #f05a22;
+  stroke-width: 1.8;
+}
+
+.component-rotation-zero-label {
+  fill: #16283a;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.88);
+  stroke-width: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.component-rotation-readout {
+  position: absolute;
+  min-width: 48px;
+  padding: 5px 7px;
+  color: #16283a;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(196, 213, 224, 0.94);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.component-rotation-edit {
+  position: absolute;
+  z-index: 14;
+  display: inline-flex;
+  width: 64px;
+  height: 30px;
+  align-items: center;
+  color: #4f6577;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #c4d5e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(20, 42, 58, 0.15);
+  transform: translate(-50%, -50%);
+}
+
+.component-rotation-edit input {
+  width: 45px;
+  height: 28px;
+  padding: 0 2px 0 7px;
+  color: #29445d;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.component-rotation-edit span {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.circuit-part-graphic.mirrored {
+  transform: scaleX(-1);
+}
+
+.circuit-part-graphic svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  shape-rendering: geometricPrecision;
+}
+
+.circuit-part-artwork {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text) {
+  pointer-events: visiblePainted;
+}
+
+.circuit-part-outline {
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 100ms ease;
+}
+
+.circuit-part-outline * {
+  filter: none !important;
+}
+
+.circuit-part:has(.circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text):hover) .circuit-part-outline,
+.circuit-part.selected .circuit-part-outline {
+  opacity: 1;
+}
+
+.exact-inline-component .resistor-band-1 {
+  fill: var(--resistor-band-1) !important;
+}
+
+.exact-inline-component .resistor-band-2 {
+  fill: var(--resistor-band-2) !important;
+}
+
+.exact-inline-component .resistor-band-3 {
+  fill: var(--resistor-band-3) !important;
+}
+
+.exact-inline-component .resistor-band-4 {
+  fill: var(--resistor-band-4) !important;
+}
+
+.circuit-part-outline.exact-inline-component path,
+.circuit-part-outline.exact-inline-component rect,
+.circuit-part-outline.exact-inline-component circle,
+.circuit-part-outline.exact-inline-component ellipse,
+.circuit-part-outline.exact-inline-component polygon,
+.circuit-part-outline.exact-inline-component polyline {
+  fill: none !important;
+  stroke: #00a8d8 !important;
+  stroke-width: 0.22;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  shape-rendering: geometricPrecision;
+}
+
+.circuit-part-outline.exact-inline-component line {
+  stroke: #00a8d8 !important;
+  stroke-width: 0.28;
+  stroke-linecap: round !important;
+  shape-rendering: geometricPrecision;
+}
+
+.circuit-part-outline.exact-inline-component .resistor-outline-fill {
+  fill: #00a8d8 !important;
+  stroke: none !important;
+}
+
+.circuit-part-outline.exact-inline-component .battery-outline-fill {
+  fill: #00a8d8 !important;
+  stroke: #00a8d8 !important;
+  stroke-width: 0.55 !important;
+}
+
+.circuit-part > strong,
+.circuit-part > span {
+  overflow: hidden;
+  max-width: 94px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.circuit-part > strong {
+  color: #263e53;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 12px;
+}
+
+.circuit-part > span {
+  color: #607589;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+}
+
+.circuit-pin {
+  position: absolute;
+  top: 25px;
+  z-index: 5;
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  background: #f9fcfd;
+  border: 2px solid #455966;
+  border-radius: 50%;
+  cursor: crosshair;
+  opacity: 0;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  transition: opacity 100ms ease, background 100ms ease, box-shadow 100ms ease;
+}
+
+.circuit-pin.smd {
+  width: 12px;
+  height: 8px;
+  border-width: 1.5px;
+  border-radius: 2px;
+}
+
+.circuit-pin.left {
+  left: 0;
+}
+
+.circuit-pin.right {
+  right: 0;
+}
+
+.circuit-part:has(.circuit-part-artwork :is(path, rect, circle, ellipse, polygon, polyline, line, text):hover) .circuit-pin,
+.circuit-part:has(.circuit-pin:hover) .circuit-pin,
+.circuit-part.selected .circuit-pin,
+.tool-wire .circuit-pin {
+  opacity: 1;
+}
+
+.circuit-pin:hover,
+.circuit-pin.active {
+  background: #13a8d8;
+  border-color: #fff;
+  box-shadow: 0 0 0 2px #13a8d8;
+}
+
+.circuit-pin.active {
+  opacity: 1;
+}
+
+.circuit-empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  color: #607589;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.circuit-empty-state strong {
+  color: #38536a;
+  font-size: 20px;
+  font-weight: 850;
+}
+
+.circuit-empty-state span {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.part-library-panel {
+  position: fixed;
+  top: var(--editor-ribbon-height);
+  z-index: 40;
+  width: 780px;
+  max-width: calc(100vw - 24px);
+  height: min(650px, calc(100vh - var(--editor-ribbon-height) - 16px));
+  overflow: hidden;
+  color: #29445d;
+  background: #f7f9fa;
+  border: 1px solid #cbd9e3;
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
+}
+
+.part-library-panel > header {
+  display: flex;
+  min-height: 58px;
+  padding: 10px 11px 9px 15px;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f8fa;
+  border-bottom: 1px solid #d7e2e9;
+}
+
+.part-library-panel > header div {
+  display: grid;
+  gap: 2px;
+}
+
+.part-library-panel > header strong {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.part-library-panel > header span {
+  color: #718597;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.part-library-panel > header button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #536c80;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+.part-library-panel > header button:hover {
+  background: #eaf1f5;
+}
+
+.part-library-search {
+  display: grid;
+  height: 50px;
+  padding: 8px 12px;
+  grid-template-columns: 22px minmax(0, 1fr) 28px;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #d7e2e9;
+}
+
+.part-library-search svg {
+  width: 16px;
+  fill: none;
+  stroke: #6c8294;
+  stroke-linecap: round;
+  stroke-width: 1.7;
+}
+
+.part-library-search input {
+  height: 32px;
+  padding: 0 8px;
+  color: #29445d;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: 700 12px/1.2 inherit;
+}
+
+.part-library-search input::placeholder {
+  color: #8597a5;
+}
+
+.part-library-search button {
+  width: 26px;
+  height: 26px;
+  color: #607689;
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.part-library-search button:hover {
+  background: #edf3f6;
+}
+
+.part-library-browser {
+  display: grid;
+  height: calc(100% - 108px);
+  grid-template-columns: 172px minmax(0, 1fr);
+}
+
+.part-library-categories {
+  padding: 9px 8px;
+  overflow-y: auto;
+  background: #eef3f6;
+  border-right: 1px solid #d4e0e7;
+}
+
+.part-library-categories button {
+  display: grid;
+  width: 100%;
+  min-height: 34px;
+  padding: 0 8px 0 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  color: #526b7e;
+  background: transparent;
+  border-left: 3px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.part-library-categories button:hover {
+  background: #e4edf2;
+}
+
+.part-library-categories button.active {
+  color: #185b7f;
+  background: #dcecf3;
+  border-left-color: #169bcc;
+}
+
+.part-library-categories button span {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.part-library-categories button small {
+  display: grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  color: #6e8292;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid #d3dfe6;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.part-library-scroll {
+  min-width: 0;
+  padding: 10px 11px 14px;
+  overflow-y: auto;
+}
+
+.part-library-results-header {
+  display: flex;
+  min-height: 29px;
+  padding: 0 2px 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.part-library-results-header strong {
+  color: #415c70;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.part-library-results-header span {
+  color: #7c8e9c;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.part-library-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.part-library-item {
+  display: grid;
+  min-width: 0;
+  min-height: 76px;
+  padding: 7px;
+  grid-template-columns: 66px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  color: #385064;
+  background: #fff;
+  border: 1px solid #dce5eb;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.part-library-item:hover {
+  border-color: #8ecbe1;
+  background: #f4fbfd;
+}
+
+.part-library-art {
+  display: grid;
+  width: 66px;
+  height: 54px;
+  place-items: center;
+}
+
+.part-library-art svg {
+  width: 62px;
+  height: 50px;
+}
+
+.part-library-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.part-library-copy strong {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+.part-library-copy small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #7a8d9c;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.part-library-empty {
+  display: grid;
+  min-height: 160px;
+  grid-column: 1 / -1;
+  place-content: center;
+  gap: 4px;
+  color: #60778a;
+  text-align: center;
+}
+
+.part-library-empty strong {
+  font-size: 13px;
+}
+
+.part-library-empty span {
+  font-size: 10px;
+}
+
+.arrange-panel {
+  position: fixed;
+  top: var(--editor-ribbon-height);
+  z-index: 42;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  color: #29445d;
+  background: #f5f8fa;
+  border: 1px solid #c8d6e0;
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+}
+
+.arrange-panel > header {
+  display: flex;
+  min-height: 49px;
+  padding: 8px 8px 8px 13px;
+  align-items: center;
+  justify-content: space-between;
+  background: #fbfcfd;
+  border-bottom: 1px solid #d6e1e8;
+}
+
+.arrange-panel > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.arrange-panel > header strong {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.arrange-panel > header span {
+  color: #718597;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.arrange-panel > header button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: #526b7e;
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 23px;
+  line-height: 28px;
+}
+
+.arrange-panel > header button:hover {
+  background: #e8eff3;
+}
+
+.arrange-panel > section {
+  padding: 9px 10px 10px;
+  border-left: 3px solid transparent;
+}
+
+.arrange-panel > section + section {
+  border-top: 1px solid #d9e3e9;
+}
+
+.arrange-panel > section.focused {
+  border-left-color: #159fd0;
+}
+
+.arrange-panel h3 {
+  margin: 0 0 7px;
+  color: #607589;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.arrange-panel > section.focused h3 {
+  color: #176b8a;
+}
+
+.arrange-action-grid {
+  display: grid;
+  gap: 5px;
+}
+
+.arrange-action-grid.align-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.arrange-action-grid.distribute-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.arrange-action-grid button {
+  display: grid;
+  min-height: 62px;
+  padding: 5px 4px 6px;
+  place-items: center;
+  gap: 2px;
+  color: #4c6579;
+  background: #fff;
+  border: 1px solid #d5e0e7;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.arrange-action-grid button:hover {
+  color: #176b8a;
+  background: #eef8fb;
+  border-color: #82cbe1;
+}
+
+.arrange-action-grid button:disabled {
+  color: #9aa8b2;
+  background: #f1f4f6;
+  border-color: #dce4e9;
+  cursor: default;
+  opacity: 0.58;
+}
+
+.arrange-action-grid svg {
+  width: 31px;
+  height: 31px;
+  overflow: visible;
+  fill: #e8edf0;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrange-action-grid span {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 11px;
+  text-align: center;
+}
+
+.component-inspector {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 8;
+  display: flex;
+  width: 320px;
+  flex-direction: column;
+  overflow-y: auto;
+  color: #243d56;
+  background: rgba(244, 246, 248, 0.96);
+  border-left: 1px solid #d8e0e7;
+  box-shadow: -2px 0 10px rgba(36, 61, 86, 0.08);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.component-inspector::-webkit-scrollbar {
+  display: none;
+}
+
+.component-inspector.minimized {
+  bottom: auto;
+  height: 50px;
+  overflow: hidden;
+}
+
+.component-inspector-header {
+  display: flex;
+  min-height: 50px;
+  padding: 0 10px 0 8px;
+  flex: 0 0 50px;
+  align-items: center;
+  background: rgba(252, 253, 254, 0.96);
+  border-bottom: 1px solid #dce4eb;
+}
+
+.component-inspector-header strong {
+  flex: 1;
+  padding-left: 11px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.inspector-header-button {
+  display: grid;
+  width: 34px;
+  height: 38px;
+  place-items: center;
+  color: #40596f;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+.inspector-header-button:hover {
+  background: #e9f0f4;
+}
+
+.inspector-header-button.collapse span {
+  display: block;
+  font-size: 25px;
+  font-weight: 900;
+  transform: translateY(4px);
+}
+
+.component-inspector.minimized .inspector-header-button.collapse span {
+  transform: rotate(180deg) translateY(-3px);
+}
+
+.component-summary-card {
+  display: grid;
+  margin: 11px 10px 10px;
+  padding: 14px 14px;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 8px;
+}
+
+.component-summary-card svg {
+  width: 86px;
+  height: 56px;
+  color: #354956;
+}
+
+.component-summary-card div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.component-summary-card strong {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.component-summary-card span {
+  color: #5d7285;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.component-summary-card small {
+  overflow: hidden;
+  color: #8494a2;
+  font-size: 9px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.component-property-card {
+  margin: 0 10px 12px;
+  padding: 0 14px 15px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 8px;
+}
+
+.component-property-card h3 {
+  margin: 0 -14px 13px;
+  padding: 13px 14px 10px;
+  color: #344e66;
+  border-bottom: 1px solid #e1e8ed;
+  font-size: 16px;
+  font-weight: 850;
+}
+
+.component-property-card label {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.component-property-card label > span {
+  color: #607489;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.component-property-card input,
+.component-property-card select {
+  width: 100%;
+  height: 34px;
+  padding: 0 9px;
+  color: #29445d;
+  background: #fbfdfe;
+  border: 1px solid #cfdbe4;
+  border-radius: 4px;
+  outline: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.component-value-with-unit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 82px;
+  gap: 7px;
+}
+
+.component-value-with-unit input,
+.component-value-with-unit select {
+  width: 100%;
+}
+
+.component-property-card input:focus,
+.component-property-card select:focus {
+  border-color: #159fd0;
+  box-shadow: 0 0 0 2px rgba(21, 159, 208, 0.13);
+}
+
+.connection-selection-card {
+  display: grid;
+  margin: 12px 10px 10px;
+  padding: 16px 14px;
+  grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #dce4eb;
+  border-radius: 6px;
+}
+
+.connection-selection-card > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.connection-selection-card span,
+.connection-selection-card small {
+  overflow: hidden;
+  color: #718497;
+  font-size: 10px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.connection-selection-card strong {
+  color: #29445d;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.connection-selection-card .connection-direction {
+  color: #13a8d8;
+  font-size: 19px;
+  text-align: center;
+}
+
+.connect-together-button {
+  height: 38px;
+  margin: 0 10px;
+  color: #fff;
+  background: #159fd0;
+  border: 0;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.connect-together-button:hover {
+  background: #078dbd;
+}
+
+.wire-property-card {
+  margin-top: 12px;
+}
+
+.wire-color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+
+.wire-color-grid button {
+  display: grid;
+  height: 38px;
+  padding: 0;
+  place-items: center;
+  background: #f8fafb;
+  border: 1px solid #d3dde4;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.wire-color-grid button:hover {
+  border-color: #8cb5c7;
+}
+
+.wire-color-grid button.active {
+  border-color: #159fd0;
+  outline: 2px solid rgba(21, 159, 208, 0.18);
+}
+
+.wire-color-grid button span {
+  display: block;
+  width: 25px;
+  height: 6px;
+  background: var(--wire-swatch);
+  border-radius: 3px;
+}
+
+.wire-edit-help {
+  display: grid;
+  margin: 0 10px 12px;
+  padding: 13px 14px;
+  gap: 6px;
+  color: #607489;
+  background: #fff;
+  border: 1px solid #dce4eb;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.wire-edit-help strong {
+  color: #344e66;
+  font-size: 13px;
+}
+
+.board-shortcut-help {
+  color: #7b8d9c;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.wire-delete-button {
+  height: 38px;
+  margin: 0 10px;
+  color: #9b2f2f;
+  background: #fff;
+  border: 1px solid #dfbcbc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.wire-delete-button:hover {
+  background: #fff6f6;
+  border-color: #c98585;
+}
+
+.board-outline-summary {
+  display: grid;
+  margin: 12px 10px 10px;
+  padding: 14px;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  background: #fff;
+  border: 1px solid #dce4eb;
+  border-radius: 6px;
+}
+
+.board-summary-shape {
+  display: block;
+  width: 68px;
+  height: 43px;
+  background: #76ad8f;
+  clip-path: polygon(6% 18%, 53% 4%, 94% 24%, 82% 91%, 29% 82%, 3% 58%);
+}
+
+.board-outline-summary > div {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.board-outline-summary strong {
+  overflow: hidden;
+  color: #29445d;
+  font-size: 14px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.board-outline-summary span:not(.board-summary-shape) {
+  color: #718497;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.board-dimension-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 6px;
+}
+
+.board-dimension-input > span {
+  color: #61778b;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.board-inspector-actions {
+  display: grid;
+  margin: 0 10px 12px;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.board-inspector-actions button {
+  min-height: 38px;
+  padding: 0 10px;
+  color: #36536a;
+  background: #fff;
+  border: 1px solid #cfdbe4;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.board-inspector-actions button:hover,
+.board-inspector-actions button.active {
+  color: #176b8a;
+  background: #eef9fc;
+  border-color: #82cbe1;
+}
+
+.board-inspector-actions button:disabled {
+  color: #9aa9b5;
+  background: #f3f6f8;
+  border-color: #dce4e9;
+  cursor: default;
+}
+
+.board-inspector-actions button:only-child {
+  grid-column: 1 / -1;
+}
+
+.grid-settings {
+  position: absolute;
+  right: 12px;
+  bottom: 11px;
+  z-index: 6;
+  color: #435a72;
+  font-size: 13px;
+}
+
+.inspector-snap-dock {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding: 14px 12px 16px;
+  background: linear-gradient(180deg, rgba(244, 246, 248, 0), rgba(244, 246, 248, 0.98) 18px, rgba(244, 246, 248, 0.98));
+  border-top: 1px solid rgba(216, 224, 231, 0.75);
+}
+
+.snap-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #435a72;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 22px;
+  white-space: nowrap;
+}
+
+.snap-select {
+  display: inline-flex;
+  width: 75px;
+  height: 22px;
+  padding: 0 5px 0 9px;
+  align-items: center;
+  justify-content: space-between;
+  color: #6b7784;
+  background: #fff;
+  border: 1px solid #d8e0e8;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.snap-chevron {
+  width: 0;
+  height: 0;
+  border-top: 5px solid currentColor;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+.snap-menu {
+  position: absolute;
+  right: 0;
+  bottom: 26px;
+  z-index: 20;
+  width: 92px;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid #d3dee6;
+  box-shadow: 0 8px 18px rgba(30, 53, 71, 0.17);
+}
+
+.snap-menu button {
+  display: block;
+  width: 100%;
+  padding: 6px 9px;
+  color: #425a72;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.snap-menu button:hover,
+.snap-menu button.selected {
+  background: #eef4f7;
+}
+
+.editor-toast {
+  position: absolute;
+  bottom: 22px;
+  left: 22px;
+  z-index: 15;
+  padding: 10px 14px;
+  color: #29445d;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d4e0e7;
+  border-radius: 5px;
+  box-shadow: 0 7px 20px rgba(37, 63, 82, 0.15);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.design-check-panel {
+  position: fixed;
+  top: var(--editor-ribbon-height);
+  right: 0;
+  bottom: 0;
+  z-index: 18;
+  display: flex;
+  width: min(438px, 44vw);
+  min-width: 390px;
+  flex-direction: column;
+  color: #243d56;
+  background: #f3f6f8;
+  border-left: 1px solid #bfd0da;
+  box-shadow: -12px 0 30px rgba(31, 58, 76, 0.14);
+}
+
+.design-check-panel.collapsed {
+  top: calc(var(--editor-ribbon-height) + 12px);
+  right: 12px;
+  bottom: auto;
+  width: 340px;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #b9cbd6;
+  border-radius: 7px;
+  box-shadow: 0 9px 25px rgba(31, 58, 76, 0.19);
+}
+
+.design-check-panel.collapsed .design-check-scroll,
+.design-check-panel.collapsed .design-check-footer {
+  display: none;
+}
+
+.design-check-header {
+  display: grid;
+  min-height: 64px;
+  padding: 9px 10px 9px 12px;
+  grid-template-columns: 39px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  background: linear-gradient(180deg, #fff 0%, #f8fafb 100%);
+  border-bottom: 1px solid #d7e0e7;
+  box-shadow: inset 0 3px 0 #159fd0;
+}
+
+.design-check-header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.design-check-header > div strong {
+  color: #243f58;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.design-check-header > div span {
+  color: #6e8192;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.design-check-header-actions {
+  display: flex !important;
+  grid-auto-flow: column;
+  gap: 2px !important;
+}
+
+.design-check-header-actions > button {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  color: #526b80;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.design-check-header-actions > button:hover {
+  background: #edf2f5;
+}
+
+.design-check-shield {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 11px;
+}
+
+.design-check-shield.failed {
+  color: #b9302d;
+  background: #fde9e7;
+}
+
+.design-check-shield.passed {
+  color: #16824d;
+  background: #e5f6ed;
+}
+
+.design-check-shield.running {
+  color: #187ba1;
+  background: #e3f3f9;
+}
+
+.design-check-shield.running svg {
+  animation: design-check-shield-pulse 1s ease-in-out infinite alternate;
+}
+
+.design-check-shield svg {
+  width: 27px;
+  height: 31px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.design-check-scroll {
+  min-height: 0;
+  padding: 10px;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #b7c6d1 transparent;
+  scrollbar-width: thin;
+}
+
+.design-check-status {
+  display: flex;
+  min-height: 94px;
+  padding: 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: #fff;
+  border: 1px solid;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(38, 61, 78, 0.06);
+}
+
+.design-check-status.failed {
+  border-color: #edb1ad;
+  box-shadow: inset 4px 0 0 #d8463e, 0 4px 14px rgba(95, 39, 35, 0.06);
+}
+
+.design-check-status.passed {
+  border-color: #9bd5b6;
+  box-shadow: inset 4px 0 0 #2b9d61, 0 4px 14px rgba(31, 92, 59, 0.06);
+}
+
+.design-check-status > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.design-check-status > div > span {
+  color: #768899;
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.11em;
+}
+
+.design-check-status.failed > div > span,
+.design-check-status.failed > div > strong {
+  color: #a92d29;
+}
+
+.design-check-status.passed > div > span,
+.design-check-status.passed > div > strong {
+  color: #187645;
+}
+
+.design-check-status > div > strong {
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.design-check-status p {
+  max-width: 315px;
+  margin: 0;
+  color: #607487;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.design-check-status > button {
+  min-width: 82px;
+  height: 32px;
+  padding: 0 13px;
+  color: #fff;
+  background: #197da5;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.design-check-status > button:hover {
+  background: #12698d;
+}
+
+.design-check-metrics {
+  display: grid;
+  margin: 11px 0 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.design-check-metrics > div {
+  display: grid;
+  min-height: 58px;
+  padding: 7px 10px;
+  place-content: center;
+  gap: 1px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #dce4ea;
+  border-radius: 8px;
+}
+
+.design-check-metrics strong {
+  font-size: 19px;
+  font-weight: 950;
+}
+
+.design-check-metrics span {
+  color: #708292;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.design-check-metrics .errors strong { color: #c23a34; }
+.design-check-metrics .warnings strong { color: #b57009; }
+.design-check-metrics .passed strong { color: #258451; }
+
+.design-check-updated {
+  display: flex;
+  margin: 11px 1px 9px;
+  align-items: center;
+  gap: 7px;
+  color: #728596;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.design-check-live-dot {
+  width: 7px;
+  height: 7px;
+  background: #26a263;
+  border: 2px solid #d8f2e4;
+  border-radius: 50%;
+  box-sizing: content-box;
+}
+
+.design-check-live-dot.stale {
+  background: #c78013;
+  border-color: #f9e9c9;
+}
+
+.design-check-sections {
+  display: grid;
+  gap: 9px;
+}
+
+.design-check-section {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d7e1e8;
+  border-radius: 9px;
+}
+
+.design-check-section > header {
+  display: grid;
+  min-height: 54px;
+  padding: 8px 10px;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #e4eaee;
+}
+
+.design-check-section > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.design-check-section > header > div strong {
+  color: #2f4a61;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.design-check-section > header > div span,
+.design-check-section > header small {
+  color: #788a99;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.design-check-section > header > div span {
+  display: none;
+}
+
+.design-check-section > header small {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.design-check-category-icon,
+.design-check-severity {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 950;
+}
+
+.design-check-category-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+}
+
+.design-check-category-icon.failed,
+.design-check-issue.error .design-check-severity {
+  color: #b9312c;
+  background: #fbe6e4;
+}
+
+.design-check-category-icon.warning,
+.design-check-issue.warning .design-check-severity {
+  color: #a2670a;
+  background: #fff1d7;
+}
+
+.design-check-category-icon.passed {
+  color: #1f8050;
+  background: #e4f5ec;
+}
+
+.design-check-clear-row {
+  display: flex;
+  min-height: 45px;
+  padding: 0 14px;
+  align-items: center;
+  gap: 8px;
+  color: #557466;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.design-check-clear-row span {
+  color: #23925a;
+  font-size: 13px;
+}
+
+.design-check-issue-list {
+  display: grid;
+}
+
+.design-check-issue {
+  display: grid;
+  width: 100%;
+  min-height: 53px;
+  padding: 8px 10px;
+  grid-template-columns: 25px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  color: #314b61;
+  text-align: left;
+  background: #fff;
+  border-bottom: 1px solid #e8edf0;
+  cursor: pointer;
+}
+
+.design-check-issue:last-child {
+  border-bottom: 0;
+}
+
+.design-check-issue:hover {
+  background: #f4fafc;
+}
+
+.design-check-issue:disabled {
+  cursor: default;
+}
+
+.design-check-issue:disabled:hover {
+  background: #fff;
+}
+
+.design-check-severity {
+  width: 23px;
+  height: 23px;
+  font-size: 11px;
+}
+
+.design-check-issue-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.design-check-issue-copy strong {
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.design-check-issue-copy > span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #697c8d;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.design-check-locate {
+  color: #177ca4;
+  font-size: 9px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.design-check-show-more {
+  min-height: 38px;
+  color: #176f94;
+  background: #f5fafc;
+  border-top: 1px solid #dfe9ee;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.design-check-show-more:hover {
+  background: #eaf5f9;
+}
+
+.design-check-footer {
+  display: grid;
+  min-height: 70px;
+  padding: 12px 16px;
+  gap: 3px;
+  color: #6c7e8e;
+  background: #eef2f5;
+  border-top: 1px solid #d3dde4;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.design-check-footer strong {
+  color: #526a7e;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.design-check-progress {
+  display: grid;
+  padding: 28px 22px;
+  gap: 12px;
+  color: #5f7688;
+  font-size: 11px;
+}
+
+.design-check-progress > span {
+  position: relative;
+  display: block;
+  height: 4px;
+  overflow: hidden;
+  background: #dbe5eb;
+  border-radius: 2px;
+}
+
+.design-check-progress > span::after {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  background: #159fd0;
+  border-radius: inherit;
+  animation: design-check-progress 0.8s ease-in-out infinite alternate;
+  content: "";
+}
+
+.circuit-wire.check-located .wire-path {
+  stroke: var(--check-located-color, #e03a32) !important;
+  stroke-width: 4.8px;
+  filter: drop-shadow(0 0 4px rgba(224, 58, 50, 0.75));
+  animation: design-check-wire-pulse 0.8s ease-in-out infinite alternate;
+}
+
+.circuit-wire.check-located.warning,
+.circuit-part.check-located.warning {
+  --check-located-color: #d8890d;
+}
+
+.circuit-part.check-located::after {
+  position: absolute;
+  inset: -8px;
+  z-index: 9;
+  border: 3px solid var(--check-located-color, #e03a32);
+  border-radius: 6px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--check-located-color, #e03a32) 16%, transparent), 0 0 13px color-mix(in srgb, var(--check-located-color, #e03a32) 64%, transparent);
+  pointer-events: none;
+  content: "";
+  animation: design-check-part-pulse 0.75s ease-in-out infinite alternate;
+}
+
+.design-check-target {
+  --check-target-color: #e03a32;
+  position: absolute;
+  z-index: 30;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.design-check-target.warning {
+  --check-target-color: #d8890d;
+}
+
+.design-check-target-ring,
+.design-check-target-cross,
+.design-check-target-label {
+  position: absolute;
+  transform: translate(-50%, -50%) scale(var(--check-target-scale));
+  transform-origin: center;
+}
+
+.design-check-target-ring {
+  width: 38px;
+  height: 38px;
+  border: 4px solid var(--check-target-color);
+  border-radius: 50%;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--check-target-color) 20%, transparent), 0 0 12px var(--check-target-color);
+  animation: design-check-target-pulse 0.72s ease-out infinite alternate;
+}
+
+.design-check-target-cross {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(var(--check-target-color), var(--check-target-color)) center/3px 100% no-repeat,
+    linear-gradient(90deg, var(--check-target-color), var(--check-target-color)) center/100% 3px no-repeat;
+  clip-path: polygon(46% 0,54% 0,54% 38%,100% 38%,100% 62%,54% 62%,54% 100%,46% 100%,46% 62%,0 62%,0 38%,46% 38%);
+}
+
+.design-check-target-label {
+  left: 0;
+  top: -42px;
+  display: flex;
+  min-width: 190px;
+  max-width: 300px;
+  padding: 8px 10px;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  background: #263f55;
+  border: 2px solid var(--check-target-color);
+  border-radius: 5px;
+  box-shadow: 0 7px 18px rgba(27, 48, 64, 0.26);
+  font-size: 10px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.design-check-target-label b {
+  padding: 3px 5px;
+  color: #fff;
+  background: var(--check-target-color);
+  border-radius: 3px;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+}
+
+@keyframes design-check-progress {
+  from { transform: translateX(-10%); }
+  to { transform: translateX(185%); }
+}
+
+@keyframes design-check-shield-pulse {
+  from { opacity: 0.5; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes design-check-target-pulse {
+  from { opacity: 0.68; transform: translate(-50%, -50%) scale(calc(var(--check-target-scale) * 0.82)); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(var(--check-target-scale)); }
+}
+
+@keyframes design-check-wire-pulse {
+  from { opacity: 0.68; }
+  to { opacity: 1; }
+}
+
+@keyframes design-check-part-pulse {
+  from { opacity: 0.58; }
+  to { opacity: 1; }
+}
+
+.visually-hidden-input {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+button:focus-visible {
+  outline: 2px solid #159fd0;
+  outline-offset: -2px;
+}
+
+@media (max-width: 900px) {
+  .editor-mode-tabs button {
+    min-width: 80px;
+    padding-inline: 14px;
+  }
+
+  .ribbon-group h2 {
+    font-size: 9px;
+  }
+
+  .component-inspector {
+    width: min(320px, calc(100vw - 56px));
+  }
+
+  .part-library-panel {
+    left: 12px !important;
+  }
+
+  .design-check-panel {
+    width: min(520px, calc(100vw - 36px));
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .component-inspector {
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    width: calc(100vw - 68px);
+    border: 1px solid #d8e0e7;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(31, 56, 76, 0.2);
+  }
+
+  .part-library-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .design-check-panel {
+    top: var(--editor-ribbon-height);
+    width: 100vw;
+  }
+
+  .design-check-status {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .design-check-status > button {
+    width: 100%;
+  }
+
+  .design-check-section > header {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .design-check-section > header small {
+    display: none;
+  }
+}
+
+/* SketchForge PCB project home β€” adapted from the official SketchForge dashboard. */
+.pcb-dashboard-shell {
+  width: 100vw;
+  height: 100vh;
+  min-width: 320px;
+  overflow: auto;
+  color: #263f57;
+  background: #f4f7f9;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.pcb-dashboard-loading {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  place-content: center;
+  place-items: center;
+  gap: 12px;
+  color: #263f57;
+  background: #f4f7f9;
+  font: 800 18px Arial, Helvetica, sans-serif;
+}
+
+.pcb-dashboard-loading img {
+  width: 64px;
+  height: 64px;
+}
+
+.pcb-dashboard-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(238px, 1fr) minmax(280px, 620px) minmax(210px, 1fr);
+  gap: 28px;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  min-height: 64px;
+  padding: 0 14px;
+  color: #fff;
+  background: #0e69f1;
+}
+
+.pcb-dashboard-brand {
+  display: inline-flex;
+  width: max-content;
+  min-width: 0;
+  align-items: center;
+  gap: 11px;
+  padding: 0;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.pcb-dashboard-brand-mark {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  color: #fff;
+}
+
+.pcb-dashboard-brand-mark img {
+  display: block;
+  width: auto;
+  height: 42px;
+  object-fit: contain;
+}
+
+.pcb-dashboard-brand > span:last-child {
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pcb-dashboard-brand:hover { opacity: .84; }
+
+.pcb-dashboard-search {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: #5f7387;
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, .78);
+  border-radius: 7px;
+  box-shadow: 0 2px 8px rgba(7, 48, 113, .16);
+}
+
+.pcb-dashboard-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: #243d56;
+  background: transparent;
+  font-size: 14px;
+}
+
+.pcb-dashboard-primary,
+.pcb-dashboard-action-tile,
+.pcb-project-card,
+.pcb-dashboard-nav-item,
+.pcb-dashboard-segmented button,
+.pcb-dashboard-select {
+  transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.pcb-dashboard-primary {
+  display: inline-flex;
+  justify-self: end;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 18px;
+  color: #0e69f1;
+  background: #fff;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.pcb-dashboard-primary:hover { background: #edf4ff; }
+
+.pcb-dashboard-brand:focus-visible,
+.pcb-dashboard-primary:focus-visible {
+  outline: 3px solid #ffce47;
+  outline-offset: 3px;
+}
+
+.pcb-dashboard-layout {
+  display: grid;
+  grid-template-columns: 158px minmax(0, 1fr);
+  min-height: calc(100vh - 64px);
+}
+
+.pcb-dashboard-sidebar {
+  position: sticky;
+  top: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: start;
+  width: 100%;
+  height: calc(100vh - 64px);
+  padding: 18px 12px;
+  background: #fff;
+  border-right: 1px solid #d9e3ea;
+}
+
+.pcb-dashboard-nav-stack { display: grid; gap: 8px; }
+
+.pcb-dashboard-nav-item {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  color: #40586f;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.pcb-dashboard-nav-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pcb-dashboard-nav-item:hover,
+.pcb-dashboard-nav-item.active {
+  color: #0e69f1;
+  background: #edf4ff;
+}
+
+.pcb-dashboard-nav-item:focus { outline: 0; }
+.pcb-dashboard-nav-item:focus-visible { box-shadow: inset 0 0 0 2px #0e69f1; }
+.pcb-dashboard-settings-button { color: #536a80; }
+
+.pcb-dashboard-main {
+  min-width: 0;
+  padding: 22px;
+}
+
+.pcb-dashboard-actions-band {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.pcb-dashboard-action-tile {
+  display: flex;
+  min-width: 0;
+  min-height: 88px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  color: #263f57;
+  background: #fff;
+  border: 1px solid #d9e3eb;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(31, 52, 71, .05);
+}
+
+.pcb-dashboard-action-tile:hover,
+.pcb-project-card:hover {
+  border-color: #8bbaf7;
+  box-shadow: 0 5px 15px rgba(32, 61, 82, .12);
+  transform: translateY(-1px);
+}
+
+.pcb-dashboard-action-tile.create {
+  border-color: #8bbaf7;
+  background: #f5f8ff;
+}
+
+.pcb-dashboard-action-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: #fff;
+  background: #0e69f1;
+  border-radius: 8px;
+}
+
+.pcb-dashboard-action-tile:not(.create) .pcb-dashboard-action-icon {
+  color: #254056;
+  background: #eef3f6;
+}
+
+.pcb-dashboard-action-tile > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.pcb-dashboard-notice {
+  margin: -12px 0 20px;
+  color: #40586c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pcb-dashboard-section-header {
+  display: flex;
+  min-width: 0;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.pcb-dashboard-section-header h1 {
+  margin: 0;
+  color: #213c55;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.pcb-dashboard-section-header > div > span {
+  display: inline-block;
+  margin-top: 4px;
+  color: #708295;
+  font-size: 13px;
+}
+
+.pcb-dashboard-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
+.pcb-dashboard-select {
+  display: inline-flex;
+  height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 9px;
+  color: #40586f;
+  background: #fff;
+  border: 1px solid #d6e0e8;
+  border-radius: 6px;
+}
+
+.pcb-dashboard-select select {
+  min-width: 82px;
+  border: 0;
+  outline: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+}
+
+.pcb-dashboard-segmented {
+  display: inline-grid;
+  height: 36px;
+  grid-template-columns: 36px 36px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d6e0e8;
+  border-radius: 6px;
+}
+
+.pcb-dashboard-segmented button {
+  display: grid;
+  place-items: center;
+  color: #5d7184;
+  background: transparent;
+  cursor: pointer;
+}
+
+.pcb-dashboard-segmented button.active { color: #fff; background: #40586f; }
+
+.pcb-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 15px;
+}
+
+.pcb-project-list { display: grid; gap: 10px; }
+
+.pcb-project-card {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  padding: 10px;
+  color: #263f57;
+  background: #fff;
+  border: 1px solid #d9e3eb;
+  border-radius: 8px;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(31, 52, 71, .05);
+}
+
+.pcb-project-list .pcb-project-card { padding-right: 50px; }
+
+.pcb-project-card-open {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: auto auto auto;
+  gap: 9px;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+}
+
+.pcb-project-list .pcb-project-card-open {
+  grid-template-columns: 126px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+}
+
+.pcb-project-preview {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  color: #1d9fd1;
+  background: #eaf8fd;
+  border-radius: 6px;
+}
+
+.pcb-project-list .pcb-project-preview { grid-row: 1 / span 2; }
+.pcb-project-preview.accent-green { color: #2b9b68; background: #e9f7ef; }
+.pcb-project-preview.accent-gold { color: #d09a24; background: #fff6df; }
+.pcb-project-preview.accent-red { color: #d45454; background: #fff0f0; }
+
+.pcb-project-preview svg { display: block; width: 100%; height: 100%; }
+.pcb-project-preview text { fill: #6d8193; font: 800 12px Arial, Helvetica, sans-serif; }
+.pcb-project-preview .preview-board { fill: rgba(83, 177, 138, .12); stroke: #36956f; stroke-width: 2; }
+.pcb-project-preview .preview-trace { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.pcb-project-preview .preview-junction { fill: #2f9e44; }
+.pcb-project-preview .pcb-thumbnail-part { width: 100%; height: 100%; overflow: visible; }
+
+.pcb-project-card-title {
+  min-width: 0;
+  overflow: hidden;
+  color: #263f57;
+  font-size: 15px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pcb-project-card-meta {
+  min-width: 0;
+  overflow: hidden;
+  color: #6d8193;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pcb-project-menu-trigger {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #5e7183;
+  background: rgba(255, 255, 255, .94);
+  border: 1px solid #d7e1e8;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: .92;
+  box-shadow: 0 2px 6px rgba(24, 43, 60, .1);
+}
+
+.pcb-project-menu-trigger:hover,
+.pcb-project-menu-trigger[aria-expanded="true"] { color: #264d6b; border-color: #a9bdcc; background: #f5f9fc; }
+
+.pcb-project-card-menu {
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  z-index: 4;
+  display: grid;
+  width: 148px;
+  gap: 3px;
+  padding: 5px;
+  color: #314b61;
+  background: #fff;
+  border: 1px solid #ccd9e3;
+  border-radius: 7px;
+  box-shadow: 0 10px 28px rgba(24, 43, 60, .18);
+}
+
+.pcb-project-card-menu button {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 10px;
+  color: inherit;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: left;
+}
+
+.pcb-project-card-menu button:hover { background: #eef5fa; }
+.pcb-project-card-menu button.delete { color: #b01925; }
+.pcb-project-card-menu button.delete:hover { background: #fff1f2; }
+
+.pcb-project-empty {
+  display: grid;
+  min-height: 190px;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  color: #6d8193;
+  background: #fff;
+  border: 1px dashed #cbd9e3;
+  border-radius: 8px;
+}
+
+.pcb-project-empty strong { color: #263f57; font-size: 18px; }
+
+.pcb-dashboard-coming-soon {
+  display: grid;
+  min-height: calc(100vh - 108px);
+  place-content: center;
+  justify-items: center;
+  color: #173a56;
+  text-align: center;
+}
+
+.pcb-dashboard-coming-soon > span { color: #0e69f1; font-size: 13px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.pcb-dashboard-coming-soon strong { margin-top: 8px; font-size: clamp(42px, 7vw, 88px); font-weight: 900; line-height: 1; }
+.pcb-dashboard-coming-soon p { max-width: 470px; color: #708295; }
+
+.pcb-dashboard-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(23, 38, 52, .34);
+}
+
+.pcb-dashboard-confirm-dialog {
+  width: min(420px, 100%);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #cbd9e3;
+  border-radius: 8px;
+  box-shadow: 0 20px 55px rgba(31, 49, 67, .24);
+}
+
+.pcb-dashboard-confirm-dialog header,
+.pcb-dashboard-settings-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pcb-dashboard-confirm-dialog header { padding: 16px 18px 12px; border-bottom: 1px solid #e5edf3; }
+.pcb-dashboard-confirm-dialog header strong { color: #1d3448; font-size: 16px; }
+.pcb-dashboard-confirm-dialog header button,
+.pcb-dashboard-settings-panel header button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: #60778b;
+  background: #fff;
+  border: 1px solid #cbd9e3;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pcb-dashboard-confirm-dialog p { margin: 0; padding: 18px; color: #40586c; font-size: 14px; line-height: 1.45; }
+.pcb-dashboard-confirm-dialog p span { color: #1d3448; font-weight: 800; }
+
+.pcb-dashboard-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 18px 18px;
+}
+
+.pcb-dashboard-confirm-actions button { height: 38px; padding: 0 16px; border-radius: 6px; cursor: pointer; font-weight: 800; }
+.pcb-dashboard-confirm-actions .cancel { color: #40586c; background: #fff; border: 1px solid #cbd9e3; }
+.pcb-dashboard-confirm-actions .delete { color: #fff; background: #c82031; border: 1px solid #c82031; }
+.pcb-dashboard-confirm-actions .save { color: #fff; background: #147ca8; border: 1px solid #147ca8; }
+.pcb-dashboard-confirm-actions .save:disabled { cursor: not-allowed; opacity: .45; }
+
+.pcb-dashboard-rename-dialog > label {
+  display: grid;
+  gap: 7px;
+  padding: 18px;
+  color: #40586c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pcb-dashboard-rename-dialog input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  color: #1d3448;
+  background: #fff;
+  border: 1px solid #b9cad7;
+  border-radius: 6px;
+  outline: none;
+  font: inherit;
+  font-weight: 600;
+}
+
+.pcb-dashboard-rename-dialog input:focus { border-color: #1486b5; box-shadow: 0 0 0 3px rgba(20, 134, 181, .14); }
+
+.pcb-dashboard-settings-panel {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 40;
+  display: grid;
+  width: min(380px, calc(100vw - 32px));
+  gap: 14px;
+  padding: 16px;
+  color: #263f57;
+  background: rgba(255, 255, 255, .98);
+  border: 1px solid #d6e1ea;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(24, 44, 62, .18);
+}
+
+.pcb-dashboard-settings-panel header strong { font-size: 17px; }
+.pcb-dashboard-settings-panel > p { margin: 0; color: #708295; font-size: 12px; line-height: 1.45; }
+
+.pcb-dashboard-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 12px;
+  color: #5c7184;
+  border-top: 1px solid #e1e8ee;
+  font-size: 13px;
+}
+
+.pcb-dashboard-setting-row strong { color: #263f57; text-align: right; }
+.pcb-dashboard-file-input { position: fixed; left: -100px; top: -100px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+@media (max-width: 860px) {
+  .pcb-dashboard-topbar {
+    grid-template-areas: "brand create" "search search";
+    grid-template-columns: minmax(0, 1fr) auto;
+    height: auto;
+    gap: 10px 14px;
+    padding: 8px 12px;
+  }
+
+  .pcb-dashboard-brand { grid-area: brand; }
+  .pcb-dashboard-search { grid-area: search; }
+  .pcb-dashboard-primary { grid-area: create; }
+  .pcb-dashboard-layout { grid-template-columns: 1fr; }
+
+  .pcb-dashboard-sidebar {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+    height: auto;
+    gap: 8px;
+    padding: 10px;
+    border-right: 0;
+    border-bottom: 1px solid #d9e3ea;
+  }
+
+  .pcb-dashboard-nav-stack { display: flex; flex: 1 1 auto; gap: 8px; }
+  .pcb-dashboard-nav-item { flex: 1 1 0; min-width: 0; justify-content: center; padding: 0 10px; }
+  .pcb-dashboard-settings-button { flex: 0 1 130px; }
+  .pcb-dashboard-actions-band { grid-template-columns: 1fr; }
+  .pcb-dashboard-section-header { align-items: stretch; flex-direction: column; }
+  .pcb-dashboard-controls { justify-content: flex-start; }
+}
+
+@media (max-width: 560px) {
+  .pcb-transfer-panel {
+    right: 10px;
+    width: calc(100vw - 20px);
+  }
+
+  .pcb-export-file-section {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .pcb-export-format-slider button strong { font-size: 7.5px; }
+  .pcb-export-format-slider button span { font-size: 6.5px; }
+
+  .pcb-dashboard-topbar { gap: 7px 9px; padding: 7px 9px; }
+  .pcb-dashboard-brand-mark { width: 38px; height: 38px; border-radius: 6px; }
+  .pcb-dashboard-brand-mark img { width: auto; height: 36px; }
+  .pcb-dashboard-brand > span:last-child { font-size: 18px; }
+  .pcb-dashboard-primary { height: 38px; padding-inline: 12px; }
+  .pcb-dashboard-search { height: 38px; }
+  .pcb-dashboard-sidebar { overflow-x: auto; }
+  .pcb-dashboard-nav-item { min-width: 54px; }
+  .pcb-dashboard-nav-item span { display: none; }
+  .pcb-dashboard-main { padding: 16px 12px 22px; }
+  .pcb-project-grid { grid-template-columns: 1fr; }
+  .pcb-project-list .pcb-project-card-open { grid-template-columns: 94px minmax(0, 1fr); }
+}
+

@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":89,"method":"tools/call","params":{"name":"sketchforge_pcb_update_component","arguments":{"projectId":"15ea659b-a65f-4520-a337-fe724d6108ff","partId":"part-mst4irc4-qhlclv","xMm":10,"yMm":12,"rotation":0}}}

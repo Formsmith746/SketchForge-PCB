@@ -1,0 +1,11 @@
+interface:
+  display_name: "SketchForge PCB MCP"
+  short_description: "Build, edit, and visually inspect PCBs in SketchForge"
+  default_prompt: "Use $sketchforge-pcb-mcp to inspect an open SketchForge PCB editor, build or edit its board in place, and capture a centered board image for visual review. Use deliberate multi-segment wiring, clean routing corridors, controlled 45/90-degree bends, and no routes over unrelated component or mounting holes."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "sketchforge_pcb"
+      description: "Universal live-editor MCP bridge for SketchForge PCB"
+      transport: "stdio"
