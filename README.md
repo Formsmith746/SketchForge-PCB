@@ -290,7 +290,7 @@ http://127.0.0.1:3000/
 The AI client starts the MCP server with:
 
 ```bash
-node scripts/sketchforge-pcb-mcp-server.mjs
+node scripts/mcp/sketchforge-pcb-mcp-server.mjs
 ```
 
 or:
@@ -316,7 +316,7 @@ When working from this repository, ask Codex to use the SketchForge PCB MCP skil
 Claude can use the same SketchForge PCB MCP server even though it does not use the Codex skill file directly. Configure Claude Desktop to launch the server with the absolute path to:
 
 ```text
-scripts/sketchforge-pcb-mcp-server.mjs
+scripts/mcp/sketchforge-pcb-mcp-server.mjs
 ```
 
 After restarting Claude Desktop, ask it to list the open SketchForge PCB editors, inspect the target scene, and use the available SketchForge PCB MCP tools to make the requested PCB changes.

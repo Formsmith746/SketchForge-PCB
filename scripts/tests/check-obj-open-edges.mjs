@@ -9,7 +9,7 @@ import {
   exportWatertightObj,
   geometryTopologyStats,
   markKiCadModelForObjRepair,
-} from "../src/lib/pcbObjExport.ts";
+} from "../../src/lib/pcbObjExport.ts";
 
 const root = path.resolve("public/assets/kicad3d");
 
