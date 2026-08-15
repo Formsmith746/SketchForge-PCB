@@ -1,0 +1,9 @@
+services:
+  sketchforge-pcb:
+    image: sketchforge-pcb:local
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    ports:
+      - "${SKETCHFORGE_PCB_PORT:-3000}:3000"
+    restart: unless-stopped

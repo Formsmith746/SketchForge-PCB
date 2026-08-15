@@ -57,12 +57,12 @@ Current editor limitation: component placement and drawn routing are currently t
 
 ## Getting Started
 
-There are two common ways to work with SketchForge PCB. If you just want to use or develop the editor, start with local development.
+There are two common ways to run SketchForge PCB. If you are not sure which one to choose, use Docker.
 
 | Path | Best for | Difficulty |
 | --- | --- | --- |
-| Local development | Using the editor and changing the application | Recommended |
-| Local MCP workflow | Developers using an AI client to inspect or edit a live PCB project | Advanced |
+| Docker / local server | Running SketchForge PCB on a computer, server, classroom, workshop, or LAN | Recommended |
+| Local development | Developers who want to edit the code | Medium |
 
 SketchForge PCB is local-first. The application is served locally, while projects are saved in the browser. Project and export files download through the browser; the editor does not require a SketchForge cloud account.
 
@@ -84,6 +84,106 @@ If you do not know Git yet:
 5. Open a terminal in the extracted folder.
 
 On Windows, you can open PowerShell in the folder by opening the folder, clicking the address bar, typing `powershell`, and pressing Enter.
+
+## Docker / Local Server (Recommended)
+
+The Docker support follows the same deployment structure as SketchForge-3D. It builds the production Next.js standalone server into a container and can run either from a locally built image or the prebuilt image published to GitHub Container Registry.
+
+### What You Need
+
+- Docker Desktop on Windows or macOS, or Docker Engine on Linux
+- Docker Compose, included with modern Docker Desktop
+
+### Start SketchForge PCB
+
+#### Compose (build locally)
+
+From the SketchForge PCB project folder:
+
+```bash
+docker compose -f deploy/docker/compose.yaml up --build -d
+```
+
+#### Compose (prebuilt GitHub image)
+
+```bash
+docker compose -f deploy/docker/compose-ghcr.yaml up -d
+```
+
+The prebuilt image is:
+
+```text
+ghcr.io/formsmith746/sketchforge-pcb:latest
+```
+
+Because this repository is private, GitHub Container Registry may require authentication before pulling the image. If needed, authenticate to `ghcr.io` with a GitHub account/token that can read the package.
+
+#### Standalone image
+
+```bash
+docker run -d --name sketchforge-pcb --restart unless-stopped \
+  -p 3000:3000 \
+  ghcr.io/formsmith746/sketchforge-pcb:latest
+```
+
+Open:
+
+```text
+http://127.0.0.1:3000/
+```
+
+Projects remain in each browser's local storage. Rebuilding or replacing the Docker container does not move PCB projects into the container.
+
+### Let Other Computers Join
+
+Other computers on the same LAN can open SketchForge PCB using the Docker host's local IP address:
+
+```text
+http://SERVER-IP:3000/
+```
+
+Make sure the host firewall allows the selected port.
+
+To expose a different host port, set `SKETCHFORGE_PCB_PORT` before starting Compose. For example:
+
+Windows PowerShell:
+
+```powershell
+$env:SKETCHFORGE_PCB_PORT = "8080"
+docker compose -f deploy/docker/compose.yaml up --build -d
+```
+
+Linux or macOS:
+
+```bash
+SKETCHFORGE_PCB_PORT=8080 docker compose -f deploy/docker/compose.yaml up --build -d
+```
+
+Then open `http://127.0.0.1:8080/`.
+
+### Stop SketchForge PCB
+
+```bash
+docker compose -f deploy/docker/compose.yaml down
+```
+
+### Update the Prebuilt Image
+
+```bash
+docker compose -f deploy/docker/compose-ghcr.yaml pull sketchforge-pcb
+docker compose -f deploy/docker/compose-ghcr.yaml up -d --no-deps sketchforge-pcb
+```
+
+Every push to `main` runs `.github/workflows/docker.yml`, which uses the same GitHub Actions Docker pipeline as SketchForge-3D to build and push Linux AMD64 and ARM64 images to GHCR. It publishes branch, commit-SHA, and `latest` tags.
+
+If Node.js is installed, the repository also includes the same convenience commands used by SketchForge-3D:
+
+```bash
+npm run docker:build
+npm run docker:run
+npm run docker:up
+npm run docker:down
+```
 
 ## Local Development
 
@@ -140,12 +240,6 @@ Create a production build:
 npm run build
 ```
 
-Start the local SketchForge PCB MCP bridge for editor automation:
-
-```bash
-npm run mcp:sketchforge-pcb
-```
-
 ## Contributing
 
 Contributions are welcome. Good places to help include:
@@ -170,11 +264,13 @@ Copyright © 2026 SketchForge contributors.
 
 SketchForge PCB is licensed under the **GNU Affero General Public License v3.0**. If you modify SketchForge PCB and let users interact with the modified version over a network, the AGPL requires you to offer those users the corresponding source code under the same license. See [LICENSE](LICENSE).
 
-## SketchForge PCB MCP Skill
+## Optional: SketchForge PCB MCP Skill
 
-SketchForge PCB includes a local MCP server for AI clients that support MCP tools. It lets an agent inspect and control a live local PCB editor: list open editors, read the scene, inspect the component catalog, create or update board geometry, place and configure parts, route wires, add junctions, inspect design errors, and capture board images.
+The MCP integration is an optional AI/developer skill, not another way to install or normally use SketchForge PCB. The application itself runs through Docker or local development as described above.
 
-This workflow is for local development. Run SketchForge PCB with `npm run dev`; the editor communicates with the MCP bridge through the local `/api/sketchforge-pcb-mcp` route.
+For AI clients that support MCP tools, the included local skill can inspect and control a live development editor: list open editors, read the scene, inspect the component catalog, create or update board geometry, place and configure parts, route wires, add junctions, inspect design errors, and capture board images.
+
+This skill is local-development tooling. Run SketchForge PCB with `npm run dev`; the editor communicates with the MCP bridge through the local `/api/sketchforge-pcb-mcp` route. Production builds and Docker are for running the application, not for the MCP skill.
 
 ### Start SketchForge PCB for MCP
 

@@ -1,0 +1,6 @@
+services:
+  sketchforge-pcb:
+    image: ghcr.io/formsmith746/sketchforge-pcb:latest
+    ports:
+      - "${SKETCHFORGE_PCB_PORT:-3000}:3000"
+    restart: unless-stopped
