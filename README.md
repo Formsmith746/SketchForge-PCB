@@ -18,7 +18,7 @@
     <a href="LICENSE"><img alt="GNU AGPLv3 license" src="https://img.shields.io/badge/license-AGPLv3-663399"></a>
     <a href="https://github.com/Formsmith746/SketchForge-PCB"><img alt="SketchForge PCB on GitHub" src="https://img.shields.io/badge/GitHub-SketchForge--PCB-181717?logo=github"></a>
     <img alt="Local first" src="https://img.shields.io/badge/local--first-browser%20projects-0ea5e9">
-    <img alt="Version v1.0.0" src="https://img.shields.io/badge/version-v1.0.0-2563eb">
+    <img alt="Version v0.1.0" src="https://img.shields.io/badge/version-v0.1.0-2563eb">
   </p>
 </div>
 
